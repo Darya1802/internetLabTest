@@ -4,20 +4,23 @@ declare(strict_types=1);
 
 namespace app\controllers\actions\user;
 
-use app\models\User;
+use app\controllers\UserController;
 use yii\base\Action;
-use yii\data\ActiveDataProvider;
+use yii\web\NotFoundHttpException;
+use function intval;
 
-class IndexAction extends Action
+/**
+ * Displays a single User model.
+ * @param int $id
+ * @return string
+ * @throws NotFoundHttpException if the model cannot be found
+ */
+class ViewAction extends Action
 {
-    public function run(): Stringable|string
+    public function run($id): Stringable|string
     {
-         $dataProvider = new ActiveDataProvider([
-            'query' => User::find(),
-        ]);
-
-        return $this->controller->render('index', [
-            'dataProvider' => $dataProvider,
+        return $this->controller->render('view', [
+            'model' => $this->controller->findModel(intval($id)),
         ]);
     }
 }
