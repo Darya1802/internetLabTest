@@ -1,9 +1,55 @@
-version: '2'
+version: "3.8"
+
 services:
-  php:
-    image: yiisoftware/yii2-php:7.4-apache
-    volumes:
-      - ~/.composer-docker/cache:/root/.composer/cache:delegated
-      - ./:/app:delegated
+  internet_lab.nginx:
+    networks:
+      - network1
     ports:
-      - '8000:80'
+      - 8085:80
+    image: nginx:stable-alpine
+    volumes:
+      - ./:/app
+      - ./docker/nginx:/etc/nginx/conf.d
+    depends_on:
+      - internet_lab.php
+    restart: unless-stopped
+
+  internet_lab.php:
+    networks:
+      - network1
+    working_dir: /app
+    build:
+      dockerfile: docker/php/Dockerfile
+      context: ./
+    volumes:
+      - ./:/app
+    depends_on:
+      - internet_lab.db
+    restart: unless-stopped
+    dns:
+      - 8.8.8.8
+      - 4.4.4.4
+      - 192.168.0.1
+
+  internet_lab.db:
+    networks:
+      - network1
+    image: postgres:alpine
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=IL
+      - POSTGRES_USER=IL
+      - POSTGRES_PASSWORD=IL
+    volumes:
+      - internet_lab.db.data:/var/lib/postgresql@16/data
+    ports:
+      - 5535:5432
+
+volumes:
+  internet_lab.db.data:
+
+networks:
+  network1:
+    driver: bridge
+    driver_opts:
+      com.docker.network.driver.mtu: 1450
