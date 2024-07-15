@@ -4,13 +4,23 @@ namespace app\models;
 
 use yii\db\ActiveRecord;
 
+/**
+ *
+ * @property-read mixed $id
+ */
 class User extends ActiveRecord
 {
-    public $id;
-    public $username;
-    public $password;
-    public $authKey;
-    public $accessToken;
+    public function rules(): array
+    {
+        return [
+            // username and password are both required
+            [['username', 'password'], 'required'],
+            // email is validated by validateEmail()
+            [['email'], 'email'],
+            // username is string
+            [['username'], 'string']
+        ];
+    }
 
     /**
      * {@inheritdoc}
@@ -18,20 +28,6 @@ class User extends ActiveRecord
     public static function findIdentity($id)
     {
         return isset(self::$users[$id]) ? new static(self::$users[$id]) : null;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function findIdentityByAccessToken($token, $type = null)
-    {
-        foreach (self::$users as $user) {
-            if ($user['accessToken'] === $token) {
-                return new static($user);
-            }
-        }
-
-        return null;
     }
 
     /**
@@ -57,22 +53,6 @@ class User extends ActiveRecord
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getAuthKey()
-    {
-        return $this->authKey;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function validateAuthKey($authKey)
-    {
-        return $this->authKey === $authKey;
     }
 
     /**
