@@ -17,9 +17,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Create User', ['create'], ['class' => 'btn btn-success', 'data' => [
-            'method' => 'post',
-        ]]) ?>
+        <?= Html::a('Create User', ['create'], ['class' => 'btn btn-success', 'data' => ['method' => 'post']]) ?>
     </p>
 
 
@@ -40,6 +38,4 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
         ],
     ]); ?>
-
-
 </div>
