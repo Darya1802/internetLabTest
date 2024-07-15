@@ -7,27 +7,35 @@ namespace app\controllers\actions\user;
 use app\models\User;
 use yii\base\Action;
 use yii\data\ActiveDataProvider;
+use yii\db\Exception;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
+use function dd;
 
 /**
- * Displays a single User model.
- * @param int $id
- * @return string
- * @throws NotFoundHttpException if the model cannot be found
+ * Creates a new User model.
+ * If creation is successful, the browser will be redirected to the 'view' page.
+ * @return string|Response
  */
-class ViewAction extends Action
+class CreateAction extends Action
 {
-    public function run($id): Stringable|string
+    /**
+     * @throws Exception
+     */
+    public function run(): Response
     {
-        /**
-         * Displays a single User model.
-         * @param int $id
-         * @return string
-         * @throws NotFoundHttpException if the model cannot be found
-         */
+        $model = new User();
 
-        return $this->render('view', [
-            'model' => $this->findModel($id),
+        if ($this->controller->request->isPost) {
+            if ($model->load($this->controller->request->post()) && $model->save()) {
+                return $this->controller->redirect(['view', 'id' => $model->id]);
+            }
+        } else {
+            $model->loadDefaultValues();
+        }
+
+        return $this->controller->render('create', [
+            'model' => $model,
         ]);
     }
 }
