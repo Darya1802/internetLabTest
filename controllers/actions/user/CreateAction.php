@@ -6,11 +6,8 @@ namespace app\controllers\actions\user;
 
 use app\models\User;
 use yii\base\Action;
-use yii\data\ActiveDataProvider;
 use yii\db\Exception;
-use yii\web\NotFoundHttpException;
 use yii\web\Response;
-use function dd;
 
 /**
  * Creates a new User model.
@@ -34,7 +31,7 @@ class CreateAction extends Action
             $model->loadDefaultValues();
         }
 
-        return $this->controller->render('create', [
+        return $this->controller->redirect('create', [
             'model' => $model,
         ]);
     }

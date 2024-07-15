@@ -4,38 +4,28 @@ declare(strict_types=1);
 
 namespace app\controllers\actions\user;
 
-use app\models\User;
 use yii\base\Action;
-use yii\data\ActiveDataProvider;
-use yii\db\Exception;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
-use function dd;
+use function intval;
 
 /**
- * Creates a new User model.
- * If creation is successful, the browser will be redirected to the 'view' page.
- * @return string|Response
- */
-class CreateAction extends Action
-{
-    /**
-     * @throws Exception
+     * Updates an existing User model.
+     * If update is successful, the browser will be redirected to the 'view' page.
+     * @param int $id
+     * @return string|Response
+     * @throws NotFoundHttpException if the model cannot be found
      */
-    public function run(): Response
+class UpdateAction extends Action
+{
+    public function run($id): Response
     {
-        $model = new User();
+       $model = $this->controller->findModel(intval($id));
 
-        if ($this->controller->request->isPost) {
-            if ($model->load($this->controller->request->post()) && $model->save()) {
-                return $this->controller->redirect(['view', 'id' => $model->id]);
-            }
-        } else {
-            $model->loadDefaultValues();
+        if ($this->controller->request->isPost && $model->load($this->controller->request->post()) && $model->save()) {
+            return $this->controller->redirect(['view', 'id' => $model->id]);
         }
 
-        return $this->controller->render('create', [
-            'model' => $model,
-        ]);
+        return $this->controller->redirect(['update',['id' => $model->id]]);
     }
 }
